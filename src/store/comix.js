@@ -67,7 +67,6 @@ export default {
             id: payload
           }
         })
-        dispatch('fetchList')
       } catch (err) {
         throw new Error(err)
       }
@@ -83,8 +82,12 @@ export default {
     SET_COMIX_LIST (state, payload) {
       state.comixList = payload
     },
-    SET_APPEND_COMIX_LIST (state, payload) {
+    SET_APPEND_COMIX_ITEM (state, payload) {
       state.comixList.push(payload)
+    },
+    SET_REMOVE_COMIX_ITEM_BY_ID (state, payload) {
+      const comixToDeleteIndex = state.comixList.findIndex(comix => comix.id === payload)
+      state.comixList.splice(comixToDeleteIndex, 1)
     }
   }
 }

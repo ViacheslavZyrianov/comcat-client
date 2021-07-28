@@ -121,7 +121,7 @@ export default {
     ...mapMutations('comix', [
       'SET_IS_ADD_EDIT_COMIX_VISIBLE',
       'SET_COMIX_DATA',
-      'SET_APPEND_COMIX_LIST'
+      'SET_APPEND_COMIX_ITEM'
     ]),
     ...mapMutations({
       SET_NOTIFICATION: 'notification/SET_NOTIFICATION'
@@ -140,7 +140,7 @@ export default {
         this.isButtonLoading = true
         if (this.isModeAdd) {
           const newComixId = await this.postComixItem(this.formData)
-          this.SET_APPEND_COMIX_LIST({
+          this.SET_APPEND_COMIX_ITEM({
             id: newComixId,
             title: this.comixData.title,
             universe: this.comixData.universe,

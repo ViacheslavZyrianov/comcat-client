@@ -27,7 +27,7 @@
               @click="onEditComixClick(comix.id)"
             ></button>
             <button
-              class="button button_round button_red button_delete"
+              :class="buttonDeleteComixItemClassList"
               @click="onDeleteComixClick(comix.id, comix.title)"
             ></button>
           </div>
@@ -91,7 +91,8 @@ export default {
       isComixListLoaded: false,
       layout: 'grid',
       searchText: '',
-      comixListFiltered: []
+      comixListFiltered: [],
+      isButtonDeleteComixItemLoading: false
     }
   },
   watch: {
@@ -127,6 +128,15 @@ export default {
         `comix-list__body_${this.layout}`
       ]
     },
+    buttonDeleteComixItemClassList () {
+      return [
+        'button',
+        'button_round',
+        'button_delete',
+        { button_red: !this.isButtonDeleteComixItemLoading },
+        { 'button_loading button_disabled': this.isButtonDeleteComixItemLoading }
+      ]
+    },
     isComixListExists () {
       return this.comixListFiltered.length
     },
@@ -144,7 +154,8 @@ export default {
     }),
     ...mapMutations('comix', [
       'SET_IS_ADD_EDIT_COMIX_VISIBLE',
-      'SET_COMIX_DATA'
+      'SET_COMIX_DATA',
+      'SET_REMOVE_COMIX_ITEM_BY_ID'
     ]),
     ...mapMutations({
       SET_NOTIFICATION: 'notification/SET_NOTIFICATION'
@@ -174,10 +185,13 @@ export default {
       const isDeleteComix = window.confirm(`Delete comix ${title}?`)
       this.isDeleteComixLoading = true
       try {
+        this.isButtonDeleteComixItemLoading = true
         if (isDeleteComix) await this.deleteComixItem(id)
+        this.SET_REMOVE_COMIX_ITEM_BY_ID(id)
       } catch (err) {
         this.SET_NOTIFICATION(err)
       } finally {
+        this.isButtonDeleteComixItemLoading = false
         this.isDeleteComixLoading = false
       }
     }
