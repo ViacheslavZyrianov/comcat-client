@@ -16,6 +16,7 @@
           :src="comix.cover.url"
           width="100%"
           class="comix__cover"
+          @click="onFullComixImageModalOpen(comix.cover.url)"
         >
         <div class="comix__info">
           <div class="comix__title">{{ comix.title }}</div>
@@ -75,6 +76,15 @@
         @click="onAddComix"
       ></button>
     </footer>
+    <modal
+      v-if="isFullComixImageModal"
+      @close="onFullComixImageModalClose"
+    >
+      <img
+        :src="comixFullImgURL"
+        width="100%"
+      >
+    </modal>
   </div>
   <div
     v-else
@@ -87,15 +97,22 @@
 <script>
 import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
 
+import Modal from './Modal.vue'
+
 export default {
   name: 'ComixList',
+  components: {
+    Modal
+  },
   data () {
     return {
       isComixListLoaded: false,
       layout: 'grid',
       searchText: '',
       comixListFiltered: [],
-      isButtonDeleteComixItemLoading: false
+      isButtonDeleteComixItemLoading: false,
+      comixFullImgURL: null,
+      isFullComixImageModal: false
     }
   },
   watch: {
@@ -166,6 +183,13 @@ export default {
     ...mapMutations({
       SET_NOTIFICATION: 'notification/SET_NOTIFICATION'
     }),
+    onFullComixImageModalOpen (url) {
+      this.isFullComixImageModal = true
+      this.comixFullImgURL = url
+    },
+    onFullComixImageModalClose () {
+      this.isFullComixImageModal = false
+    },
     onLayoutClick () {
       if (this.layout === 'grid') this.layout = 'list'
       else if (this.layout === 'list') this.layout = 'grid'
@@ -245,6 +269,11 @@ export default {
     border-radius: 8px;
     background-color: #282642;
     overflow: hidden;
+    transition: width 0.3s;
+
+    &_full {
+      width: 100%;
+    }
   }
 
   &__footer {
