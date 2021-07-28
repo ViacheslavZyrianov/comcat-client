@@ -4,7 +4,7 @@
     class="comix-list"
   >
     <div
-      v-if="isComixListLoadedAndHasItems"
+      v-if="isComixListExists"
       :class="bodyClassList"
     >
       <div
@@ -35,7 +35,13 @@
       </div>
     </div>
     <div
-      v-else-if="isComixListLoadedAndHasNoItems"
+      v-if="isComixListNotFound"
+      class="comix-list_not-found"
+    >
+      There is no such comix 😢
+    </div>
+    <div
+      v-if="isComixListEmpty"
       class="comix-list_empty"
     >
       You still don't have any comix in your collection 😢
@@ -47,10 +53,7 @@
         Add first comix
       </button>
     </div>
-    <footer
-      v-if="isComixListLoadedAndHasItems"
-      class="comix-list__footer"
-    >
+    <footer class="comix-list__footer">
       <div
         :class="layoutClassList"
         @click="onLayoutClick"
@@ -85,7 +88,6 @@ export default {
   name: 'ComixList',
   data () {
     return {
-      containerId: 1,
       isComixListLoaded: false,
       layout: 'grid',
       searchText: '',
@@ -125,11 +127,14 @@ export default {
         `comix-list__body_${this.layout}`
       ]
     },
-    isComixListLoadedAndHasItems () {
-      return this.isComixListLoaded && this.comixListFiltered.length
+    isComixListExists () {
+      return this.comixListFiltered.length
     },
-    isComixListLoadedAndHasNoItems () {
-      return this.isComixListLoaded && this.comixListFiltered.length === 0
+    isComixListNotFound () {
+      return this.searchText.length && this.comixListFiltered.length === 0
+    },
+    isComixListEmpty () {
+      return this.searchText.length === 0 && this.comixListFiltered.length === 0
     }
   },
   methods: {
@@ -260,10 +265,12 @@ export default {
   }
 
   &_empty,
-  &_not-loaded {
+  &_not-loaded,
+  &_not-found {
     width: 100%;
     color: #fff;
     text-align: center;
+    margin: auto;
   }
 
   &_empty {
@@ -273,6 +280,10 @@ export default {
     font-size: 32px;
     margin-bottom: auto;
     margin-top: auto;
+  }
+
+  &_not-found {
+    font-size: 32px;
   }
 }
 
