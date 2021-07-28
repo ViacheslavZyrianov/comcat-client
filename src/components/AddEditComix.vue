@@ -77,7 +77,8 @@ export default {
   computed: {
     ...mapState('comix', [
       'isAddComixVisible',
-      'comixData'
+      'comixData',
+      'comixList'
     ]),
     ...mapState({
       user: state => state.user.user
@@ -119,7 +120,8 @@ export default {
     }),
     ...mapMutations('comix', [
       'SET_IS_ADD_EDIT_COMIX_VISIBLE',
-      'SET_COMIX_DATA'
+      'SET_COMIX_DATA',
+      'SET_APPEND_COMIX_LIST'
     ]),
     ...mapMutations({
       SET_NOTIFICATION: 'notification/SET_NOTIFICATION'
@@ -136,10 +138,22 @@ export default {
         this.formData.append('image', this.comixData.cover.image, this.comixData.cover.name)
         this.formData.append('user_id', this.user.id)
         this.isButtonLoading = true
-        if (this.isModeAdd) await this.postComixItem(this.formData)
+        if (this.isModeAdd) {
+          const newComixId = await this.postComixItem(this.formData)
+          this.SET_APPEND_COMIX_LIST({
+            id: newComixId,
+            title: this.comixData.title,
+            universe: this.comixData.universe,
+            cover: this.comixData.cover
+          })
+        }
         if (this.isModeEdit) {
           this.formData.append('id', this.comixData.id)
           await this.putComixItem(this.formData)
+          const updatedComix = this.comixList.find(comix => comix.id === this.comixData.id)
+          updatedComix.title = this.comixData.title
+          updatedComix.universe = this.comixData.universe
+          updatedComix.cover = this.comixData.cover
         }
         this.SET_IS_ADD_EDIT_COMIX_VISIBLE(false)
         this.clearForm()

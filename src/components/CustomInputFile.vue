@@ -31,11 +31,32 @@ export default {
     }
   },
   methods: {
+    compressImage (file, cb) {
+      const blobURL = window.URL.createObjectURL(file)
+      const img = new Image()
+      img.src = blobURL
+
+      img.onload = () => {
+        const { width, height } = this.calculateAspectRatioFit(img.width, img.height, 600, 840)
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
+        canvas.width = width
+        canvas.height = height
+        ctx.drawImage(img, 0, 0, width, height)
+        canvas.toBlob(blob => cb(blob))
+      }
+    },
+    calculateAspectRatioFit (srcWidth, srcHeight, maxWidth, maxHeight) {
+      const ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight)
+      return { width: srcWidth * ratio, height: srcHeight * ratio }
+    },
     onChange (evt) {
-      this.$emit('change', {
-        name: evt.target.files[0].name,
-        url: URL.createObjectURL(evt.target.files[0]),
-        image: evt.target.files[0]
+      this.compressImage(evt.target.files[0], blob => {
+        this.$emit('change', {
+          name: evt.target.files[0].name,
+          url: URL.createObjectURL(blob),
+          image: blob
+        })
       })
     },
     onDelete () {

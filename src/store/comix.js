@@ -22,6 +22,9 @@ export default {
             user_id: rootState.user.user.id
           }
         })
+
+        if (!data) return
+
         const comixList = await Promise.all(data.map(async comix => {
           const base64Response = await fetch(`data:image/jpeg;base64,${comix.image_base64}`)
           const blob = await base64Response.blob()
@@ -42,18 +45,17 @@ export default {
         throw new Error(err)
       }
     },
-    async putItem ({ dispatch }, payload) {
+    async putItem (_, payload) {
       try {
         await Vue.$axios.put('/comix/update', payload)
-        dispatch('fetchList')
       } catch (err) {
         throw new Error(err)
       }
     },
-    async postItem ({ dispatch }, payload) {
+    async postItem (_, payload) {
       try {
-        await Vue.$axios.post('/comix/add', payload)
-        dispatch('fetchList')
+        const data = await Vue.$axios.post('/comix/add', payload)
+        return data.id
       } catch (err) {
         throw new Error(err)
       }
@@ -80,6 +82,9 @@ export default {
     },
     SET_COMIX_LIST (state, payload) {
       state.comixList = payload
+    },
+    SET_APPEND_COMIX_LIST (state, payload) {
+      state.comixList.push(payload)
     }
   }
 }
