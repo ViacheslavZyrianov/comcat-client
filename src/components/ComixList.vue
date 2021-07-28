@@ -53,7 +53,10 @@
         Add first comix
       </button>
     </div>
-    <footer class="comix-list__footer">
+    <footer
+      v-if="isFooter"
+      class="comix-list__footer"
+    >
       <div
         :class="layoutClassList"
         @click="onLayoutClick"
@@ -145,6 +148,9 @@ export default {
     },
     isComixListEmpty () {
       return this.searchText.length === 0 && this.comixListFiltered.length === 0
+    },
+    isFooter () {
+      return this.comixList.length
     }
   },
   methods: {
