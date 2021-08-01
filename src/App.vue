@@ -105,10 +105,14 @@ export default {
  .button {
    display: flex;
    align-items: center;
+   justify-content: center;
    position: relative;
-   border-radius: 0;
+   border-radius: 4px;
    border: none;
+   padding: 8px 16px;
    color: #fff;
+   font-size: 14px;
+   line-height: 1.2;
 
    &_green {
      background-color: #10c971;
@@ -140,6 +144,7 @@ export default {
      border-radius: 50%;
      width: 32px;
      height: 32px;
+     padding: 0;
    }
 
    &_big {
@@ -237,7 +242,16 @@ export default {
    }
 
    &__icon {
-     margin-left: 8px;
+    width: 14px;
+    height: 14px;
+
+     &_left{
+       margin-right: 8px;
+     }
+
+     &_right{
+       margin-left: 8px;
+     }
    }
  }
 </style>

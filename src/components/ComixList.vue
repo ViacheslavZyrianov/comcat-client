@@ -5,7 +5,7 @@
   >
     <div
       v-if="isComixListExists"
-      :class="bodyClassList"
+      class="comix-list__body"
     >
       <div
         v-for="comix in comixListFiltered"
@@ -24,13 +24,17 @@
           <hr class="divider">
           <div class="comix__buttons">
             <button
-              class="button button_round button_yellow button_edit"
+              class="button button_round button_yellow"
               @click="onEditComixClick(comix.id)"
-            ></button>
+            >
+              <svg class="button__icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="pen" role="img" viewBox="0 0 512 512"><path fill="currentColor" d="M290.74 93.24l128.02 128.02-277.99 277.99-114.14 12.6C11.35 513.54-1.56 500.62.14 485.34l12.7-114.22 277.9-277.88zm207.2-19.06l-60.11-60.11c-18.75-18.75-49.16-18.75-67.91 0l-56.55 56.55 128.02 128.02 56.55-56.55c18.75-18.76 18.75-49.16 0-67.91z"/></svg>
+            </button>
             <button
               :class="buttonDeleteComixItemClassList"
               @click="onDeleteComixClick(comix.id, comix.title)"
-            ></button>
+            >
+              <svg class="button__icon" aria-hidden="true" focusable="false" data-prefix="far" data-icon="trash-alt" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M268 416h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12zM432 80h-82.41l-34-56.7A48 48 0 0 0 274.41 0H173.59a48 48 0 0 0-41.16 23.3L98.41 80H16A16 16 0 0 0 0 96v16a16 16 0 0 0 16 16h16v336a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128h16a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16zM171.84 50.91A6 6 0 0 1 177 48h94a6 6 0 0 1 5.15 2.91L293.61 80H154.39zM368 464H80V128h288zm-212-48h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12z"/></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -58,23 +62,23 @@
       v-if="isFooter"
       class="comix-list__footer"
     >
-      <div
-        :class="layoutClassList"
-        @click="onLayoutClick"
-      >
-      </div>
+      <button class="button button_round button_blue comix-list__filter">
+        <svg class="button__icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="filter" role="img" viewBox="0 0 512 512"><path fill="currentColor" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"/></svg>
+      </button>
       <input
         v-model="searchText"
-        placeholder="Search by title"
+        placeholder="Type to search..."
         type="text"
         name="search"
         class="input input_search"
         @input="onSearchInput"
       >
       <button
-        class="button button_round button_add button_green comix-list__button-add"
+        class="button button_round button_green comix-list__add"
         @click="onAddComix"
-      ></button>
+      >
+        <svg class="button__icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>
+      </button>
     </footer>
     <modal
       v-if="isFullComixImageModal"
@@ -107,7 +111,6 @@ export default {
   data () {
     return {
       isComixListLoaded: false,
-      layout: 'grid',
       searchText: '',
       comixListFiltered: [],
       isButtonDeleteComixItemLoading: false,
@@ -130,29 +133,10 @@ export default {
     ...mapGetters({
       getComixById: 'comix/getComixById'
     }),
-    isLayoutGrid () {
-      return this.currentLayout === 'grid'
-    },
-    isLayoutList () {
-      return this.currentLayout === 'list'
-    },
-    layoutClassList () {
-      return [
-        'comix-list__layout',
-        `comix-list__layout_${this.layout}`
-      ]
-    },
-    bodyClassList () {
-      return [
-        'comix-list__body',
-        `comix-list__body_${this.layout}`
-      ]
-    },
     buttonDeleteComixItemClassList () {
       return [
         'button',
         'button_round',
-        'button_delete',
         { button_red: !this.isButtonDeleteComixItemLoading },
         { 'button_loading button_disabled': this.isButtonDeleteComixItemLoading }
       ]
@@ -180,19 +164,15 @@ export default {
       'SET_COMIX_DATA',
       'SET_REMOVE_COMIX_ITEM_BY_ID'
     ]),
-    ...mapMutations({
-      SET_NOTIFICATION: 'notification/SET_NOTIFICATION'
-    }),
+    ...mapMutations('notification', [
+      'SET_NOTIFICATION'
+    ]),
     onFullComixImageModalOpen (url) {
       this.isFullComixImageModal = true
       this.comixFullImgURL = url
     },
     onFullComixImageModalClose () {
       this.isFullComixImageModal = false
-    },
-    onLayoutClick () {
-      if (this.layout === 'grid') this.layout = 'list'
-      else if (this.layout === 'list') this.layout = 'grid'
     },
     onSearchInput () {
       if (this.searchText) this.comixListFiltered = this.comixList.filter(({ title }) => title.toLowerCase().includes(this.searchText.toLowerCase()))
@@ -241,26 +221,13 @@ export default {
 
   &__body {
     display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
     grid-auto-rows: min-content;
     border-radius: 8px;
     margin-bottom: auto;
     transition: .5s;
     overflow: auto;
-
-    &_grid {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    &_list {
-      grid-template-columns: 1fr;
-
-      .comix-list__comix {
-        img {
-          display: none;
-        }
-      }
-    }
   }
 
   &__comix {
@@ -277,40 +244,23 @@ export default {
   }
 
   &__footer {
+    position: relative;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     margin-top: 16px;
   }
 
-  &__layout {
-    position: relative;
-    margin-left: auto;
-    width: 24px;
-    height: 24px;
-    transition: transform .3s;
+  &__filter {
+    margin-right: 16px;
+  }
 
-    &:before,
-    &:after {
-      content: '';
-      position: absolute;
-      height: 4px;
-      background-color: #fff;
-      left: 0;
-      right: 0;
-      border-radius: 2px;
-    }
+  &__add {
+  }
 
-    &:before {
-      top: 6px;
-    }
-
-    &:after {
-      bottom: 6px;
-    }
-
-    &_list {
-      transform: rotate(90deg) scaleX(.6);
-    }
+  .input_search {
+    flex: 1;
+    margin-right: 16px;
   }
 
   &_empty,
