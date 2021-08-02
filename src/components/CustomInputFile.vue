@@ -13,7 +13,9 @@
       v-if="value"
       class="input-file__delete"
       @click="onDelete"
-    ></button>
+    >
+      <svg class="button__icon" aria-hidden="true" focusable="false" data-prefix="far" data-icon="trash-alt" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M268 416h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12zM432 80h-82.41l-34-56.7A48 48 0 0 0 274.41 0H173.59a48 48 0 0 0-41.16 23.3L98.41 80H16A16 16 0 0 0 0 96v16a16 16 0 0 0 16 16h16v336a48 48 0 0 0 48 48h288a48 48 0 0 0 48-48V128h16a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16zM171.84 50.91A6 6 0 0 1 177 48h94a6 6 0 0 1 5.15 2.91L293.61 80H154.39zM368 464H80V128h288zm-212-48h24a12 12 0 0 0 12-12V188a12 12 0 0 0-12-12h-24a12 12 0 0 0-12 12v216a12 12 0 0 0 12 12z"/></svg>
+    </button>
   </div>
 </template>
 
@@ -89,29 +91,7 @@ input {
     height: 32px;
     border: none;
     background-color: transparent;
-
-    &:before,
-    &:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      margin: auto;
-      width: 2px;
-      height: 16px;
-      border-radius: 2px;
-      background: #fa366f;
-    }
-
-    &:before {
-      transform: rotate(-45deg);
-    }
-
-    &:after {
-      transform: rotate(45deg);
-    }
+    color: #fa366f;
   }
 }
 

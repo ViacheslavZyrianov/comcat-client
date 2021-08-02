@@ -70,7 +70,16 @@ export default {
   data () {
     return {
       title: null,
-      universeList: ['DC', 'Marvel'],
+      universeList: [
+        {
+          value: 'dc',
+          label: 'DC'
+        },
+        {
+          value: 'marvel',
+          label: 'Marvel'
+        }
+      ],
       isButtonLoading: false,
       formData: null
     }
@@ -203,7 +212,7 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 32px;
+  padding: 16px;
   transform: translateY(100%);
   transition: transform .3s;
   background-color: #1c1a31;

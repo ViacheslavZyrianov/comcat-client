@@ -8,7 +8,7 @@
       class="comix-list__body"
     >
       <div
-        v-for="comix in comixListFiltered"
+        v-for="comix in getComixListFiltered"
         :key="comix.id"
         class="comix-list__comix"
       >
@@ -20,7 +20,7 @@
         >
         <div class="comix__info">
           <div class="comix__title">{{ comix.title }}</div>
-          <div class="comix__universe">{{ comix.universe }}</div>
+          <div class="comix__universe">{{ getUniverseLabelByValue(comix.universe) }}</div>
           <hr class="divider">
           <div class="comix__buttons">
             <button
@@ -62,22 +62,19 @@
       v-if="isFooter"
       class="comix-list__footer"
     >
-      <button class="button button_round button_blue comix-list__filter">
-        <svg class="button__icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="filter" role="img" viewBox="0 0 512 512"><path fill="currentColor" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"/></svg>
-      </button>
-      <input
-        v-model="searchText"
-        placeholder="Type to search..."
-        type="text"
-        name="search"
-        class="input input_search"
-        @input="onSearchInput"
-      >
       <button
-        class="button button_round button_green comix-list__add"
+        class="button button_blue comix-list__filter"
+        @click="onOpenFilterPanel"
+      >
+        <svg class="button__icon button__icon_left" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="filter" role="img" viewBox="0 0 512 512"><path fill="currentColor" d="M487.976 0H24.028C2.71 0-8.047 25.866 7.058 40.971L192 225.941V432c0 7.831 3.821 15.17 10.237 19.662l80 55.98C298.02 518.69 320 507.493 320 487.98V225.941l184.947-184.97C520.021 25.896 509.338 0 487.976 0z"/></svg>
+        <div class="button__text">Filter</div>
+      </button>
+      <button
+        class="button button_green comix-list__add"
         @click="onAddComix"
       >
-        <svg class="button__icon" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>
+        <svg class="button__icon button__icon_left" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"/></svg>
+        <div class="button__text">Add</div>
       </button>
     </footer>
     <modal
@@ -111,27 +108,20 @@ export default {
   data () {
     return {
       isComixListLoaded: false,
-      searchText: '',
-      comixListFiltered: [],
       isButtonDeleteComixItemLoading: false,
       comixFullImgURL: null,
       isFullComixImageModal: false
     }
   },
-  watch: {
-    comixList: {
-      handler () {
-        this.comixListFiltered = [...this.comixList]
-      },
-      deep: true
-    }
-  },
   computed: {
     ...mapState('comix', [
+      'filter',
       'comixList'
     ]),
     ...mapGetters({
-      getComixById: 'comix/getComixById'
+      getComixById: 'comix/getComixById',
+      getComixListFiltered: 'comix/getComixListFiltered',
+      getUniverseLabelByValue: 'comix/getUniverseLabelByValue'
     }),
     buttonDeleteComixItemClassList () {
       return [
@@ -142,13 +132,13 @@ export default {
       ]
     },
     isComixListExists () {
-      return this.comixListFiltered.length
+      return this.getComixListFiltered.length
     },
     isComixListNotFound () {
-      return this.searchText.length && this.comixListFiltered.length === 0
+      return this.filter.search.length && this.getComixListFiltered.length === 0
     },
     isComixListEmpty () {
-      return this.searchText.length === 0 && this.comixListFiltered.length === 0
+      return this.filter.search.length === 0 && this.getComixListFiltered.length === 0
     },
     isFooter () {
       return this.comixList.length
@@ -162,21 +152,21 @@ export default {
     ...mapMutations('comix', [
       'SET_IS_ADD_EDIT_COMIX_VISIBLE',
       'SET_COMIX_DATA',
-      'SET_REMOVE_COMIX_ITEM_BY_ID'
+      'SET_REMOVE_COMIX_ITEM_BY_ID',
+      'SET_IS_FILTER_PANEL_VISIBLE'
     ]),
     ...mapMutations('notification', [
       'SET_NOTIFICATION'
     ]),
+    onOpenFilterPanel () {
+      this.SET_IS_FILTER_PANEL_VISIBLE(true)
+    },
     onFullComixImageModalOpen (url) {
       this.isFullComixImageModal = true
       this.comixFullImgURL = url
     },
     onFullComixImageModalClose () {
       this.isFullComixImageModal = false
-    },
-    onSearchInput () {
-      if (this.searchText) this.comixListFiltered = this.comixList.filter(({ title }) => title.toLowerCase().includes(this.searchText.toLowerCase()))
-      else this.comixListFiltered = [...this.comixList]
     },
     onAddComix () {
       this.SET_IS_ADD_EDIT_COMIX_VISIBLE(true)
@@ -252,7 +242,7 @@ export default {
   }
 
   &__filter {
-    margin-right: 16px;
+    margin-right: 8px;
   }
 
   &__add {
@@ -260,7 +250,7 @@ export default {
 
   .input_search {
     flex: 1;
-    margin-right: 16px;
+    margin-right: 8px;
   }
 
   &_empty,

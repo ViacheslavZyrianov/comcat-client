@@ -4,6 +4,15 @@ export default {
   state: {
     comixList: [],
     isAddComixVisible: false,
+    isFilterPanelVisible: false,
+    filter: {
+      search: '',
+      universe: 'all'
+    },
+    universeList: {
+      dc: 'DC',
+      marvel: 'Marvel'
+    },
     comixData: {
       id: null,
       title: null,
@@ -12,7 +21,18 @@ export default {
     }
   },
   getters: {
-    getComixById: state => id => state.comixList.find(comix => comix.id === id)
+    getComixById: state => id => state.comixList.find(comix => comix.id === id),
+    getUniverseLabelByValue: state => value => state.universeList[value],
+    getComixListFiltered: state => {
+      let filteredComixList = state.comixList
+      if (state.filter.search.length) filteredComixList = filteredComixList.filter(({ title }) => title.toLowerCase().includes(state.filter.search.toLowerCase()))
+      if (state.filter.universe !== 'all') {
+        filteredComixList = filteredComixList.filter(({ universe }) => {
+          return universe === state.filter.universe
+        })
+      }
+      return filteredComixList
+    }
   },
   actions: {
     async fetchList ({ rootState, commit }) {
@@ -60,7 +80,7 @@ export default {
         throw new Error(err)
       }
     },
-    async deleteItem ({ dispatch }, payload) {
+    async deleteItem (_, payload) {
       try {
         await Vue.$axios.delete('/comix/delete', {
           params: {
@@ -88,6 +108,15 @@ export default {
     SET_REMOVE_COMIX_ITEM_BY_ID (state, payload) {
       const comixToDeleteIndex = state.comixList.findIndex(comix => comix.id === payload)
       state.comixList.splice(comixToDeleteIndex, 1)
+    },
+    SET_IS_FILTER_PANEL_VISIBLE (state, payload) {
+      state.isFilterPanelVisible = payload
+    },
+    SET_FILTER_SEARCH (state, payload) {
+      state.filter.search = payload
+    },
+    SET_FILTER_UNIVERSE (state, payload) {
+      state.filter.universe = payload
     }
   }
 }

@@ -1,10 +1,10 @@
 <template>
   <div class="select">
     <div
-      v-if="value"
+      v-if="selectedValue"
       class="fake-select fake-select__value"
     >
-      {{ value }}
+      {{ selectedValue }}
     </div>
     <div
       v-else
@@ -18,10 +18,10 @@
     >
       <option
         v-for="item in list"
-        :key="item"
-        :value="item"
+        :key="item.value"
+        :value="item.value"
       >
-        {{ item }}
+        {{ item.label }}
       </option>
     </select>
   </div>
@@ -52,6 +52,11 @@ export default {
   watch: {
     defaultValue () {
       this.value = this.defaultValue
+    }
+  },
+  computed: {
+    selectedValue () {
+      return this.list.find(selectItem => selectItem.value === this.value)?.label
     }
   },
   methods: {

@@ -4,6 +4,7 @@
       <custom-header />
       <comix-list />
       <add-edit-comix />
+      <filter-panel />
       <notification />
     </template>
     <auth v-else />
@@ -11,12 +12,14 @@
 </template>
 
 <script>
+import { mapActions, mapState } from 'vuex'
+
 import CustomHeader from './components/CustomHeader.vue'
 import ComixList from './components/ComixList.vue'
 import AddEditComix from './components/AddEditComix.vue'
+import FilterPanel from './components/FilterPanel.vue'
 import Notification from './components/Notification.vue'
 import Auth from './components/Auth.vue'
-import { mapActions, mapState } from 'vuex'
 
 export default {
   name: 'App',
@@ -25,7 +28,8 @@ export default {
     ComixList,
     AddEditComix,
     Notification,
-    Auth
+    Auth,
+    FilterPanel
   },
   computed: {
     ...mapState({
@@ -85,6 +89,8 @@ export default {
  }
 
  input {
+   width: 100%;
+
    &[type="file"] {
      height: 32px;
      font-size: 0;
